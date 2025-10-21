@@ -4,85 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Inscription Utilisateur</title>
+    <!-- Bootstrap CSS via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <style>
-      :root{
-        --matrix-bg:#000000;
-        --matrix-primary:#00ff9c;
-        --matrix-primary-2:#00d47f;
-        --matrix-text:#c3ffd8;
-        --matrix-dim:#0b1f16;
-        --matrix-border: rgba(0,255,156,0.35);
-      }
-      html, body { height: 100%; }
-      body {
-        background: var(--matrix-bg);
-        color: var(--matrix-text);
-        font-family: "Courier New", ui-monospace, Menlo, Monaco, Consolas, monospace;
-        overflow-x: hidden;
-      }
-      #matrixCanvas{
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-        opacity: 0.9;
-      }
-      .matrix-content { position: relative; z-index: 1; }
-      .card {
-        background: rgba(0,0,0,0.55);
-        border: 1px solid var(--matrix-border);
-        box-shadow: 0 0 18px rgba(0,255,156,0.18), inset 0 0 30px rgba(0,255,156,0.05);
-        backdrop-filter: blur(2px);
-        animation: cardGlow 4s ease-in-out infinite alternate;
-      }
-      @keyframes cardGlow {
-        from { box-shadow: 0 0 12px rgba(0,255,156,0.12), inset 0 0 20px rgba(0,255,156,0.03); }
-        to   { box-shadow: 0 0 26px rgba(0,255,156,0.28), inset 0 0 40px rgba(0,255,156,0.08); }
-      }
-      h1, h2 { text-shadow: 0 0 10px rgba(0,255,156,.6); color: var(--matrix-primary); }
-      .form-label, .table { color: var(--matrix-text); }
-      .form-control, .form-select {
-        background: var(--matrix-dim);
-        border-color: var(--matrix-border);
-        color: var(--matrix-text);
-      }
-      .form-control::placeholder { color: rgba(195,255,216,0.6); }
-      .form-control:focus {
-        background: #0c2419;
-        color: var(--matrix-text);
-        border-color: var(--matrix-primary);
-        box-shadow: 0 0 0 .2rem rgba(0,255,156,.25), 0 0 14px rgba(0,255,156,.3);
-      }
-      .btn-primary{
-        background: linear-gradient(135deg, var(--matrix-primary), var(--matrix-primary-2));
-        border-color: var(--matrix-primary-2);
-        color: #00150b;
-        text-shadow: 0 0 6px rgba(0,0,0,0.4);
-        box-shadow: 0 0 16px rgba(0,255,156,.35);
-      }
-      .btn-primary:hover{ filter: brightness(1.1); box-shadow: 0 0 22px rgba(0,255,156,.55); }
-      .btn-outline-secondary{ color: var(--matrix-text); border-color: var(--matrix-border); }
-      .btn-outline-secondary:hover{ background: #143726; border-color: var(--matrix-primary); color: var(--matrix-text); }
-      .invalid-feedback { color: #ff8a8a; }
-      .form-hint { font-size: .875rem; color: #7dd7a9; }
+      body { background: #f7f7fb; }
+      .card { box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+      .form-hint { font-size: .875rem; color: #6c757d; }
       .table-section { display: none; }
-      table.table { color: var(--matrix-text); }
-      table.table thead th { border-bottom: 1px solid var(--matrix-border); color: var(--matrix-primary); }
-      table.table tbody tr { border-color: rgba(0,255,156,0.15); }
     </style>
   </head>
   <body>
-    <canvas id="matrixCanvas" aria-hidden="true"></canvas>
-    <div class="container py-5 matrix-content">
+    <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
           <div class="card">
             <div class="card-body p-4">
               <h1 class="h3 mb-3 text-center">Inscription</h1>
-              <p class="text-center mb-4" style="color:#8fe9bb">Entrez vos informations pour créer un compte.</p>
+              <p class="text-muted text-center mb-4">Remplissez le formulaire ci-dessous pour créer un compte.</p>
 
               <form id="signupForm" class="needs-validation" novalidate>
                 <div class="mb-3">
@@ -102,7 +40,7 @@
                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}"
                            aria-describedby="pwdHelp"
                            required>
-                    <button class="btn btn-outline-secondary" type="button" id="togglePwd" aria-label="Afficher/masquer le mot de passe">👁️</button>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePwd" aria-label="Afficher/masquer le mot de passe">👀</button>
                     <div class="invalid-feedback">8+ caractères, au moins 1 minuscule, 1 majuscule et 1 symbole.</div>
                   </div>
                   <div id="pwdHelp" class="form-hint mt-1">8+ caractères, inclure: 1 minuscule, 1 majuscule, 1 symbole.</div>
@@ -151,63 +89,7 @@
     </div>
 
     <script>
-      // ============== Animation Matrix (pluie de caractères) ==============
-      (function matrixRain(){
-        const canvas = document.getElementById('matrixCanvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-
-        function resize(){
-          const dpr = window.devicePixelRatio || 1;
-          canvas.width = Math.floor(window.innerWidth * dpr);
-          canvas.height = Math.floor(window.innerHeight * dpr);
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          initDrops();
-        }
-
-        const letters = 'アァカサタナハマヤャラワガザダバパ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%&+*<>/\\';
-        const chars = letters.split('');
-        let fontSize = 16;
-        let columns = 0;
-        let drops = [];
-        let speed = 0.45; // vitesse plus lente (caractères par frame)
-
-        function initDrops(){
-          fontSize = Math.max(14, Math.min(22, Math.floor(window.innerWidth / 60)));
-          columns = Math.ceil(window.innerWidth / fontSize);
-          drops = new Array(columns).fill(0).map(() => Math.floor(Math.random() * -50));
-          ctx.font = fontSize + "px 'Courier New', monospace";
-        }
-
-        function draw(){
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          for (let i = 0; i < drops.length; i++) {
-            const x = i * fontSize;
-            const y = drops[i] * fontSize;
-            const char = chars[Math.floor(Math.random() * chars.length)];
-
-            ctx.fillStyle = 'rgba(0,255,156,0.95)';
-            ctx.fillText(char, x, y);
-
-            ctx.fillStyle = 'rgba(0,200,122,0.65)';
-            ctx.fillText(char, x, y - fontSize);
-
-            if (y > window.innerHeight && Math.random() > 0.975) {
-              drops[i] = Math.floor(Math.random() * -30);
-            }
-            drops[i] += speed;
-          }
-          requestAnimationFrame(draw);
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-        requestAnimationFrame(draw);
-      })();
-
-      // ===================== Formulaire & validations =====================
+      // Utilisateurs statiques initiaux (pas de serveur)
       const users = [
         { email: 'alice@example.com', dob: '1990-05-12' },
         { email: 'bob@example.com',   dob: '1985-11-03' },
@@ -222,17 +104,20 @@
       const usersTableBody = document.querySelector('#usersTable tbody');
       const togglePwdBtn = document.getElementById('togglePwd');
 
+      // Fixer la date max pour interdire une date >= aujourd'hui
       (function setMaxDob() {
         const todayISO = new Date().toISOString().split('T')[0];
-        dobInput.setAttribute('max', todayISO);
+        dobInput.setAttribute('max', todayISO); // permet la sélection <= aujourd'hui
       })();
 
+      // Afficher/Masquer le mot de passe
       togglePwdBtn.addEventListener('click', () => {
         const isPwd = pwdInput.type === 'password';
         pwdInput.type = isPwd ? 'text' : 'password';
         togglePwdBtn.setAttribute('aria-pressed', isPwd ? 'true' : 'false');
       });
 
+      // Validation dynamique de la confirmation de mot de passe
       function syncConfirmValidity(showEmptyError = false) {
         if (!confirmInput) return;
         const pwd = pwdInput.value;
@@ -250,6 +135,7 @@
       pwdInput.addEventListener('input', () => syncConfirmValidity(false));
       confirmInput.addEventListener('input', () => syncConfirmValidity(false));
 
+      // Validation personnalisée de la date (strictement antérieure à aujourd'hui)
       function isDobValidStrict(dateStr) {
         if (!dateStr) return false;
         const d = new Date(dateStr);
@@ -266,6 +152,7 @@
           const tdEmail = document.createElement('td');
           tdEmail.textContent = u.email;
           const tdDob = document.createElement('td');
+          // Affichage dd/mm/yyyy
           const parts = u.dob.split('-');
           const dobDisplay = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : u.dob;
           tdDob.textContent = dobDisplay;
@@ -280,34 +167,47 @@
         return re.test(pwd);
       }
 
+      // Validation et soumission (sans serveur)
       form.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        // Réinitialiser états custom
         dobInput.setCustomValidity('');
         pwdInput.setCustomValidity('');
         confirmInput.setCustomValidity('');
 
+        // Checks HTML5
         const emailOK = emailInput.checkValidity();
         const pwdOK = validatePassword(pwdInput.value);
         if (!pwdOK) pwdInput.setCustomValidity('Mot de passe non conforme');
+        // Confirme mot de passe
         const confirmOK = pwdInput.value === confirmInput.value && confirmInput.value.length > 0;
         if (!confirmOK) syncConfirmValidity(true);
         const dobOK = isDobValidStrict(dobInput.value);
         if (!dobOK) dobInput.setCustomValidity('Date invalide');
 
         if (emailOK && pwdOK && confirmOK && dobOK) {
+          // Ajouter l'utilisateur et afficher la liste
           users.push({ email: emailInput.value.trim(), dob: dobInput.value });
           renderUsers();
+
+          // Option UX: reset du formulaire et états
           form.reset();
           form.classList.remove('was-validated');
+          // Refixer max au cas où (changement de jour)
           const todayISO = new Date().toISOString().split('T')[0];
           dobInput.setAttribute('max', todayISO);
+          // Nettoyer les validités custom
           pwdInput.setCustomValidity('');
           confirmInput.setCustomValidity('');
         } else {
+          // Affichage visuel Bootstrap
           form.classList.add('was-validated');
         }
       });
+
+      // Afficher la liste statique uniquement après une soumission valide
+      // (rien à faire ici au chargement)
     </script>
   </body>
   </html>
