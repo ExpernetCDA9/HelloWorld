@@ -1,12 +1,9 @@
-<<<<<<< HEAD
+
 1. Princesse Mononoké
 2. Gintama
 3. El Dorado
 
-
-
-=======
 1) Spider-Man 2
 2) Jujutsu Kaisen
 3) iRobot
->>>>>>> 23a4c6b56b1263bf5ae28e3c1a93d01507056a5e
+
