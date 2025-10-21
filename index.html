@@ -6,21 +6,10 @@
     <title>Inscription Utilisateur</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <style>
-      :root{
-        --matrix-bg:#000000;
-        --matrix-primary:#00ff9c;
-        --matrix-primary-2:#00d47f;
-        --matrix-text:#c3ffd8;
-        --matrix-dim:#0b1f16;
-        --matrix-border: rgba(0,255,156,0.35);
-      }
       html, body { height: 100%; }
-      body {
-        background: var(--matrix-bg);
-        color: var(--matrix-text);
-        font-family: "Courier New", ui-monospace, Menlo, Monaco, Consolas, monospace;
-        overflow-x: hidden;
-      }
+      body { overflow-x: hidden; }
+
+      /* Canvas: caché par défaut, visible en thème Matrix */
       #matrixCanvas{
         position: fixed;
         inset: 0;
@@ -29,9 +18,25 @@
         z-index: 0;
         pointer-events: none;
         opacity: 0.9;
+        display: none;
       }
       .matrix-content { position: relative; z-index: 1; }
-      .card {
+
+      /* ===================== Thème Matrix ===================== */
+      body.theme-matrix{
+        --matrix-bg:#000000;
+        --matrix-primary:#00ff9c;
+        --matrix-primary-2:#00d47f;
+        --matrix-text:#c3ffd8;
+        --matrix-dim:#0b1f16;
+        --matrix-border: rgba(0,255,156,0.35);
+        background: var(--matrix-bg);
+        color: var(--matrix-text);
+        font-family: "Courier New", ui-monospace, Menlo, Monaco, Consolas, monospace;
+      }
+      body.theme-matrix #matrixCanvas{ display:block; }
+      body.theme-matrix h1, body.theme-matrix h2 { text-shadow: 0 0 10px rgba(0,255,156,.6); color: var(--matrix-primary); }
+      body.theme-matrix .card {
         background: rgba(0,0,0,0.55);
         border: 1px solid var(--matrix-border);
         box-shadow: 0 0 18px rgba(0,255,156,0.18), inset 0 0 30px rgba(0,255,156,0.05);
@@ -42,41 +47,53 @@
         from { box-shadow: 0 0 12px rgba(0,255,156,0.12), inset 0 0 20px rgba(0,255,156,0.03); }
         to   { box-shadow: 0 0 26px rgba(0,255,156,0.28), inset 0 0 40px rgba(0,255,156,0.08); }
       }
-      h1, h2 { text-shadow: 0 0 10px rgba(0,255,156,.6); color: var(--matrix-primary); }
-      .form-label, .table { color: var(--matrix-text); }
-      .form-control, .form-select {
+      body.theme-matrix .form-label, body.theme-matrix .table { color: var(--matrix-text); }
+      body.theme-matrix .form-control, body.theme-matrix .form-select {
         background: var(--matrix-dim);
         border-color: var(--matrix-border);
         color: var(--matrix-text);
       }
-      .form-control::placeholder { color: rgba(195,255,216,0.6); }
-      .form-control:focus {
+      body.theme-matrix .form-control::placeholder { color: rgba(195,255,216,0.6); }
+      body.theme-matrix .form-control:focus {
         background: #0c2419;
         color: var(--matrix-text);
         border-color: var(--matrix-primary);
         box-shadow: 0 0 0 .2rem rgba(0,255,156,.25), 0 0 14px rgba(0,255,156,.3);
       }
-      .btn-primary{
+      body.theme-matrix .btn-primary{
         background: linear-gradient(135deg, var(--matrix-primary), var(--matrix-primary-2));
         border-color: var(--matrix-primary-2);
         color: #00150b;
         text-shadow: 0 0 6px rgba(0,0,0,0.4);
         box-shadow: 0 0 16px rgba(0,255,156,.35);
       }
-      .btn-primary:hover{ filter: brightness(1.1); box-shadow: 0 0 22px rgba(0,255,156,.55); }
-      .btn-outline-secondary{ color: var(--matrix-text); border-color: var(--matrix-border); }
-      .btn-outline-secondary:hover{ background: #143726; border-color: var(--matrix-primary); color: var(--matrix-text); }
-      .invalid-feedback { color: #ff8a8a; }
-      .form-hint { font-size: .875rem; color: #7dd7a9; }
-      .table-section { display: none; }
-      table.table { color: var(--matrix-text); }
-      table.table thead th { border-bottom: 1px solid var(--matrix-border); color: var(--matrix-primary); }
-      table.table tbody tr { border-color: rgba(0,255,156,0.15); }
+      body.theme-matrix .btn-primary:hover{ filter: brightness(1.1); box-shadow: 0 0 22px rgba(0,255,156,.55); }
+      body.theme-matrix .btn-outline-secondary{ color: var(--matrix-text); border-color: var(--matrix-border); }
+      body.theme-matrix .btn-outline-secondary:hover{ background: #143726; border-color: var(--matrix-primary); color: var(--matrix-text); }
+      body.theme-matrix .invalid-feedback { color: #ff8a8a; }
+      body.theme-matrix .form-hint { font-size: .875rem; color: #7dd7a9; }
+      body.theme-matrix .table-section { display: none; }
+      body.theme-matrix table.table { color: var(--matrix-text); }
+      body.theme-matrix table.table thead th { border-bottom: 1px solid var(--matrix-border); color: var(--matrix-primary); }
+      body.theme-matrix table.table tbody tr { border-color: rgba(0,255,156,0.15); }
+
+      /* ===================== Thème Classique ===================== */
+      body.theme-classic{
+        background: #f7f7fb;
+        color: #212529;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      }
+      body.theme-classic .card{ background: #fff; border: 1px solid rgba(0,0,0,.075); box-shadow: 0 8px 20px rgba(0,0,0,0.06); animation: none; }
+      body.theme-classic .form-hint{ color: #6c757d; }
+      body.theme-classic .table-section { display: none; }
     </style>
   </head>
-  <body>
+  <body class="theme-matrix">
     <canvas id="matrixCanvas" aria-hidden="true"></canvas>
-    <div class="container py-5 matrix-content">
+    <div class="container py-4 matrix-content">
+      <div class="d-flex justify-content-end align-items-center mb-3">
+        <button id="themeToggle" class="btn btn-sm btn-secondary">Basculer en thème classique</button>
+      </div>
       <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
           <div class="card">
@@ -156,6 +173,8 @@
         const canvas = document.getElementById('matrixCanvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
+        // Contrôle global d'activation du rendu Matrix
+        window.matrix = { enabled: true };
 
         function resize(){
           const dpr = window.devicePixelRatio || 1;
@@ -180,8 +199,11 @@
         }
 
         function draw(){
+          // Effet d'effacement progressif
           ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          if (!window.matrix.enabled) { requestAnimationFrame(draw); return; }
 
           for (let i = 0; i < drops.length; i++) {
             const x = i * fontSize;
@@ -221,6 +243,31 @@
       const usersSection = document.getElementById('usersSection');
       const usersTableBody = document.querySelector('#usersTable tbody');
       const togglePwdBtn = document.getElementById('togglePwd');
+      const themeToggleBtn = document.getElementById('themeToggle');
+
+      // ============== Thème: bascule Matrix / Classique ==============
+      const THEME_KEY = 'theme';
+      function applyTheme(theme){
+        const body = document.body;
+        const isMatrix = theme === 'matrix';
+        body.classList.toggle('theme-matrix', isMatrix);
+        body.classList.toggle('theme-classic', !isMatrix);
+        if (window.matrix) window.matrix.enabled = isMatrix;
+        // Texte du bouton
+        themeToggleBtn.textContent = isMatrix ? 'Basculer en thème classique' : 'Basculer en thème Matrix';
+      }
+      // Charger préférence
+      (function initTheme(){
+        const saved = localStorage.getItem(THEME_KEY);
+        applyTheme(saved === 'classic' ? 'classic' : 'matrix');
+      })();
+      // Bascule sur clic et sauvegarde
+      themeToggleBtn.addEventListener('click', () => {
+        const isMatrix = document.body.classList.contains('theme-matrix');
+        const next = isMatrix ? 'classic' : 'matrix';
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+      });
 
       (function setMaxDob() {
         const todayISO = new Date().toISOString().split('T')[0];
